@@ -1,0 +1,9 @@
+node_modules
+.DS_Store
+*.psd
+
+# Build output (deployed by GitHub Actions)
+public/
+
+# Local helper form with personal data, not part of the site
+perfil-alejo.*
