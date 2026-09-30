@@ -1,5 +1,5 @@
 {
-    "repository": "https://github.com/OtroMigala/portafolio",
+    "repository": "https://github.com/OtroMigala/portfolio-websit",
     "license": "MIT",
     "scripts": {
         "start": "node server/index.ts",

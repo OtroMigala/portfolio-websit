@@ -1,10 +1,10 @@
 # Portafolio 3D - Juan Alejandro Cárdenas
 
 Escena 3D de mi portafolio, hecha con Three.js. El monitor del escritorio muestra
-[JACUSys](https://github.com/OtroMigala/jacusys), el sistema operativo 2D con mi
-información, cargado mediante un iframe.
+[JACUSys](https://github.com/OtroMigala/portfolio-inner-site), el sistema
+operativo 2D con mi información, cargado mediante un iframe.
 
-Sitio publicado: https://otromigala.github.io/portafolio/
+Sitio publicado: https://otromigala.github.io/portfolio-websit/
 
 ## Créditos
 

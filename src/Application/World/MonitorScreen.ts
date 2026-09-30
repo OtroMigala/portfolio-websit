@@ -9,7 +9,7 @@ import Camera from '../Camera/Camera';
 import EventEmitter from '../Utils/EventEmitter';
 
 // Deployed inner-site (JACUSys) shown on the monitor.
-const OS_URL = 'https://otromigala.github.io/jacusys/';
+const OS_URL = 'https://otromigala.github.io/portfolio-inner-site/';
 const OS_DEV_URL = 'http://localhost:3000/';
 
 const SCREEN_SIZE = { w: 1280, h: 1024 };
