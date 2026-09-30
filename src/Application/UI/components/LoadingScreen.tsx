@@ -47,10 +47,14 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
             setProgress(data.progress);
             setToLoad(data.toLoad);
             setLoaded(data.loaded);
+            // Fallout-style memory dump line: address, name, progress
+            const address = (0xfac6 + data.loaded * 12)
+                .toString(16)
+                .toUpperCase();
             resources.push(
-                `Loaded ${data.sourceName}${getSpace(
+                `0x${address} ${data.sourceName.toUpperCase()} ${getDots(
                     data.sourceName
-                )} ... ${Math.round(data.progress * 100)}%`
+                )} ${Math.round(data.progress * 100)}%`
             );
             if (resources.length > 8) {
                 resources.shift();
@@ -93,10 +97,13 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
         }
     }, []);
 
-    const getSpace = (sourceName: string) => {
-        let spaces = '';
-        for (let i = 0; i < 24 - sourceName.length; i++) spaces += '\xa0';
-        return spaces;
+    const getDots = (sourceName: string) => {
+        return '.'.repeat(Math.max(3, 26 - sourceName.length));
+    };
+
+    const getProgressBlocks = () => {
+        const filled = Math.round(progress * 10);
+        return '■ '.repeat(filled) + '□ '.repeat(10 - filled);
     };
 
     const getCurrentDate = () => {
@@ -107,7 +114,7 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
         // add leading zero
         const monthFormatted = month < 10 ? `0${month}` : month;
         const dayFormatted = day < 10 ? `0${day}` : day;
-        return `${monthFormatted}/${dayFormatted}/${year}`;
+        return `${dayFormatted}/${monthFormatted}/${year}`;
     };
 
     const detectWebGLContext = () => {
@@ -126,6 +133,7 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
 
     return (
         <div
+            className="crt"
             style={Object.assign({}, styles.overlay, {
                 opacity: overlayOpacity,
                 transform: `scale(${overlayOpacity === 0 ? 1.1 : 1})`,
@@ -146,41 +154,33 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
                         style={styles.header}
                         className="loading-screen-header"
                     >
-                        <div style={styles.logoContainer}>
-                            <div>
-                                <p style={styles.green}>
-                                    <b>Heffernan,</b>{' '}
-                                </p>
-                                <p style={styles.green}>
-                                    <b>Henry Inc.</b>
-                                </p>
-                            </div>
-                        </div>
-                        <div style={styles.headerInfo}>
-                            <p>Released: 01/13/2000</p>
-                            <p>HHBIOS (C)2000 Heffernan Henry Inc.,</p>
-                        </div>
+                        <p>JACUSYS INDUSTRIES (TM) TERMLINK PROTOCOL</p>
+                        <p>Compilando imagen del sistema operativo</p>
                     </div>
                     <div style={styles.body} className="loading-screen-body">
-                        <p>HSP S13 2000-2022 Special UC131S</p>
+                        <p className="crt-dim">
+                            JACUSYS BIOS V1.0 (C)2026 Cárdenas Urbano
+                        </p>
                         <div style={styles.spacer} />
                         {showBiosInfo && (
                             <>
-                                <p>HSP Showcase(tm) XX 113</p>
-                                <p>Checking RAM : {14000} OK</p>
-                                <div style={styles.spacer} />
+                                <p>Verificando memoria : {14000} OK</p>
+                                <p>
+                                    Progreso: {getProgressBlocks()}
+                                    {Math.round(progress * 100)}%
+                                </p>
                                 <div style={styles.spacer} />
                                 {showLoadingResources ? (
-                                    progress == 1 ? (
-                                        <p>FINISHED LOADING RESOURCES</p>
+                                    progress === 1 ? (
+                                        <p>&gt; Recursos compilados</p>
                                     ) : (
                                         <p className="loading">
-                                            LOADING RESOURCES ({loaded}/
+                                            &gt; Compilando recursos ({loaded}/
                                             {toLoad === 0 ? '-' : toLoad})
                                         </p>
                                     )
                                 ) : (
-                                    <p className="loading">WAIT</p>
+                                    <p className="loading">&gt; Espere</p>
                                 )}
                             </>
                         )}
@@ -190,28 +190,29 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
                                 <p key={sourceName}>{sourceName}</p>
                             ))}
                         </div>
-                        <div style={styles.spacer} />
                         {showLoadingResources && doneLoading && (
-                            <p>
-                                All Content Loaded, launching{' '}
-                                <b style={styles.green}>
-                                    'Henry Heffernan Portfolio Showcase'
-                                </b>{' '}
-                                V1.0
-                            </p>
+                            <>
+                                <p>&gt; Compilación completa.</p>
+                                <p>
+                                    &gt; Iniciando{' '}
+                                    <b>'Alejandro Urbano Portfolio Showcase'</b>{' '}
+                                    V1.0
+                                </p>
+                            </>
                         )}
                         <div style={styles.spacer} />
-                        <span className="blinking-cursor" />
+                        <p>
+                            &gt; <span className="blinking-cursor" />
+                        </p>
                     </div>
                     <div
                         style={styles.footer}
                         className="loading-screen-footer"
                     >
-                        <p>
-                            Press <b>DEL</b> to enter SETUP , <b>ESC</b> to skip
-                            memory test
+                        <p className="crt-dim">
+                            Terminal de acceso: visitante
                         </p>
-                        <p>{getCurrentDate()}</p>
+                        <p className="crt-dim">{getCurrentDate()}</p>
                     </div>
                 </div>
             )}
@@ -220,42 +221,36 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
                     opacity: startPopupOpacity,
                 })}
             >
-                <div style={styles.startPopup}>
-                    {/* <p style={styles.red}>
-                        <b>THIS SITE IS CURRENTLY A W.I.P.</b>
-                    </p>
-                    <p>But do enjoy what I have done so far :)</p>
-                    <div style={styles.spacer} />
-                    <div style={styles.spacer} /> */}
-                    <p>Henry Heffernan Portfolio Showcase 2022</p>
+                <div style={styles.startPopup} className="crt-box">
+                    <p>Alejandro Urbano Portfolio Showcase</p>
                     {mobileWarning && (
                         <>
                             <br />
-                            <b>
-                                <p style={styles.warning}>
-                                    WARNING: This experience is best viewed on
-                                </p>
-                                <p style={styles.warning}>
-                                    a desktop or laptop computer.
-                                </p>
-                            </b>
+                            <p>
+                                <b>
+                                    Advertencia: esta experiencia se ve mejor
+                                </b>
+                            </p>
+                            <p>
+                                <b>en un computador de escritorio o portátil.</b>
+                            </p>
                             <br />
                         </>
                     )}
-                    <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                        <p>Click start to begin{'\xa0'}</p>
+                    <p>
+                        &gt; Click para iniciar{'\xa0'}
                         <span className="blinking-cursor" />
-                    </div>
+                    </p>
                     <div
                         style={{
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            marginTop: '16px',
+                            marginTop: '20px',
                         }}
                     >
                         <div className="bios-start-button" onClick={start}>
-                            <p>START</p>
+                            <p>[ Iniciar ]</p>
                         </div>
                     </div>
                 </div>
@@ -266,18 +261,14 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
                         opacity: webGLErrorOpacity,
                     })}
                 >
-                    <div style={styles.startPopup}>
+                    <div style={styles.startPopup} className="crt-box">
                         <p>
-                            <b style={{ color: 'red' }}>CRITICAL ERROR:</b> No
-                            WebGL Detected
+                            <b>Error crítico:</b> no se detectó WebGL
                         </p>
                         <div style={styles.spacer} />
-                        <div style={styles.spacer} />
-
-                        <p>WebGL is required to run this site.</p>
+                        <p>Se requiere WebGL para ejecutar este sitio.</p>
                         <p>
-                            Please enable it or switch to a browser which
-                            supports WebGL
+                            Actívalo o usa un navegador que lo soporte.
                         </p>
                     </div>
                 </div>
@@ -288,7 +279,6 @@ const LoadingScreen: React.FC<LoadingProps> = () => {
 
 const styles: StyleSheetCSS = {
     overlay: {
-        backgroundColor: 'black',
         width: '100%',
         height: '100%',
         display: 'flex',
@@ -316,7 +306,7 @@ const styles: StyleSheetCSS = {
         width: '100%',
         boxSizing: 'border-box',
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
     },
     popupContainer: {
         position: 'absolute',
@@ -342,25 +332,11 @@ const styles: StyleSheetCSS = {
         padding: 48,
     },
     startPopup: {
-        backgroundColor: '#000',
-        padding: 24,
-        border: '7px solid #fff',
+        padding: '24px 32px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        maxWidth: 500,
-        // alignItems: 'center',
-    },
-    headerInfo: {
-        marginLeft: 64,
-    },
-    red: {
-        color: '#00ff00',
-    },
-    link: {
-        // textDecoration: 'none',
-        color: '#4598ff',
-        cursor: 'pointer',
+        maxWidth: 520,
     },
     overlayText: {
         width: '100%',
@@ -376,21 +352,12 @@ const styles: StyleSheetCSS = {
         boxSizing: 'border-box',
         flexDirection: 'column',
     },
-    logoContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-    },
     resourcesLoadingList: {
         display: 'flex',
-        paddingLeft: 32,
-        paddingBottom: 32,
+        paddingBottom: 16,
         flexDirection: 'column',
-    },
-    logoImage: {
-        width: 64,
-        height: 42,
-        imageRendering: 'pixelated',
-        marginRight: 16,
+        // keep the lowercase "x" of the hex addresses
+        textTransform: 'none',
     },
     footer: {
         boxSizing: 'border-box',

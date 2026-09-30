@@ -1,16 +1,29 @@
+/* Fallout-style phosphor terminal theme for every 2D overlay of the 3D site */
+:root {
+    --phosphor: #6aff9d;
+    --phosphor-dim: #3fae68;
+    --phosphor-glow: rgba(106, 255, 157, 0.45);
+    --crt-ink: #031008;
+}
+
 h1,
 h2,
 h3,
 h4,
 h5,
 p {
-    /* font-family: ocr-a-std, monospace; */
-    font-family: monospace;
+    font-family: 'VT323', monospace;
     font-weight: 400;
     font-style: normal;
-    color: white;
-    /* mobile friendly font size */
-    font-size: 16px;
+    color: var(--phosphor);
+    text-shadow: 0 0 2px var(--phosphor-glow), 0 0 10px var(--phosphor-glow);
+    font-size: 21px;
+    line-height: 1.15;
+}
+
+b {
+    font-weight: 400;
+    color: #b8ffd0;
 }
 
 /* if on mobile */
@@ -21,7 +34,7 @@ p {
     h4,
     h5,
     p {
-        font-size: 10px;
+        font-size: 13px;
     }
 }
 
@@ -54,86 +67,141 @@ br {
         content: '   ';
     }
 }
+
+/* Block cursor, like a terminal waiting for input */
 .blinking-cursor {
-    background-color: #fff;
-    width: 0.8em;
-    height: 0.15em;
-    -webkit-animation: 0.65s blink step-end infinite;
-    -moz-animation: 0.65s blink step-end infinite;
-    -ms-animation: 0.65s blink step-end infinite;
-    -o-animation: 0.65s blink step-end infinite;
-    animation: 0.65s blink step-end infinite;
+    display: inline-block;
+    background-color: var(--phosphor);
+    box-shadow: 0 0 8px var(--phosphor-glow);
+    width: 0.55em;
+    height: 1em;
+    vertical-align: text-bottom;
+    animation: 0.8s blink step-end infinite;
 }
 
 @keyframes blink {
     from,
     to {
         background-color: transparent;
+        box-shadow: none;
     }
     50% {
-        background-color: white;
+        background-color: var(--phosphor);
     }
 }
 
-@-moz-keyframes blink {
-    from,
+/* ---------- CRT screen ---------- */
+
+.crt {
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(
+            ellipse 28% 50% at 74% 18%,
+            rgba(140, 255, 190, 0.09),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse at center,
+            #0d2a18 0%,
+            #07190e 55%,
+            #020805 100%
+        );
+    box-shadow: inset 0 0 180px rgba(0, 0, 0, 0.9);
+    text-transform: uppercase;
+}
+
+/* scanlines + flicker */
+.crt::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0px,
+        rgba(0, 0, 0, 0) 2px,
+        rgba(0, 0, 0, 0.28) 3px
+    );
+    pointer-events: none;
+    z-index: 3;
+    animation: crt-flicker 4s infinite;
+}
+
+/* slow bright band rolling down the tube */
+.crt::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 25%;
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(106, 255, 157, 0.05),
+        transparent
+    );
+    pointer-events: none;
+    z-index: 3;
+    animation: crt-roll 7s linear infinite;
+}
+
+@keyframes crt-flicker {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    47% {
+        opacity: 0.85;
+    }
+    49% {
+        opacity: 1;
+    }
+    73% {
+        opacity: 0.92;
+    }
+}
+
+@keyframes crt-roll {
+    from {
+        transform: translateY(-100%);
+    }
     to {
-        background-color: transparent;
-    }
-    50% {
-        background-color: white;
+        transform: translateY(400%);
     }
 }
 
-@-webkit-keyframes blink {
-    from,
-    to {
-        background-color: transparent;
-    }
-    50% {
-        background-color: white;
-    }
+.crt-box {
+    background-color: rgba(3, 16, 8, 0.92);
+    border: 3px solid var(--phosphor);
+    box-shadow: 0 0 14px var(--phosphor-glow),
+        inset 0 0 14px rgba(106, 255, 157, 0.15);
 }
 
-@-ms-keyframes blink {
-    from,
-    to {
-        background-color: transparent;
-    }
-    50% {
-        background-color: white;
-    }
+.crt-dim {
+    color: var(--phosphor-dim);
 }
 
-@-o-keyframes blink {
-    from,
-    to {
-        background-color: transparent;
-    }
-    50% {
-        background-color: white;
-    }
-}
-
+/* Fallout highlights the selected option by inverting it */
 .bios-start-button {
-    background-color: #000;
-    border: 4px solid #fff;
-    border-width: 4px 3px 4px 3px;
+    border: 2px solid var(--phosphor);
+    box-shadow: 0 0 8px var(--phosphor-glow);
 }
 
 .bios-start-button p {
     box-sizing: border-box;
-    padding: 8px;
+    padding: 6px 20px;
 }
 
 .bios-start-button:hover p {
-    background-color: #fff;
+    background-color: var(--phosphor);
+    color: var(--crt-ink);
+    text-shadow: none;
     cursor: pointer;
-    color: #000;
 }
 
 .loading-screen-header {
     padding: 48px;
+    padding-bottom: 24px;
 }
 
 .loading-screen-body {
@@ -162,17 +230,6 @@ br {
         left: 16px;
     }
 
-    .blinking-cursor {
-        background-color: #fff;
-        width: 0.4em;
-        height: 0.08em;
-        -webkit-animation: 0.65s blink step-end infinite;
-        -moz-animation: 0.65s blink step-end infinite;
-        -ms-animation: 0.65s blink step-end infinite;
-        -o-animation: 0.65s blink step-end infinite;
-        animation: 0.65s blink step-end infinite;
-    }
-    
     .loading-screen-body {
         padding-left: 16px;
         padding-right: 16px;
